@@ -34,7 +34,7 @@ import com.example.calculadoraios.calculator.CalculatorViewModel
 @Composable
 fun CalculatorScreen(
     onNavigateToHistory: () -> Unit,
-    viewModel: CalculatorViewModel = viewModel()
+    viewModel: CalculatorViewModel
 ) {
     val currentNumber by viewModel.result
     val scrollState = rememberScrollState()
