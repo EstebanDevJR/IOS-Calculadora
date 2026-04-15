@@ -21,16 +21,15 @@ class CalculatorViewModel(
         get() = historyViewModel.history
 
     fun showContent() {
-        result.value = if (contentResult.isNotEmpty()) {
-            contentResult.joinToString("").replace(".", ",")
-        } else {
-            "0"
-        }
+        val display = contentResult.joinToString("")
+        val hasComma = display.contains(",")
+        val formatted = if (hasComma) display else display.replace(".", ",")
+        result.value = if (formatted.isNotEmpty()) formatted else "0"
     }
 
-    private fun isPrimaryOperator(s: String): Boolean = s == "÷" || s == "×" || s == "+" || s == "%"
+    private fun isPrimaryOperator(s: String): Boolean = s == "÷" || s == "×" || s == "+" || s == "-" || s == "%"
 
-    private fun isOperator(s: String): Boolean = isPrimaryOperator(s) || s == "-"
+    private fun isOperator(s: String): Boolean = isPrimaryOperator(s)
 
     fun manageClickButtons(valueButton: String) {
         if (valueButton.isEmpty()) return
@@ -51,6 +50,7 @@ class CalculatorViewModel(
     private fun resetCalculator() {
         contentResult.clear()
         contentResult.add("0")
+        result.value = "0"
         isCalculated = false
         lastOperation = ""
         lastNumber = ""
@@ -62,11 +62,12 @@ class CalculatorViewModel(
         if (lastIndex >= 0) {
             val last = contentResult[lastIndex]
             if (!isOperator(last)) {
-                val currentVal = last.toDoubleOrNull() ?: 0.0
-                if (currentVal != 0.0) {
-                    val toggled = if (last.startsWith("-")) last.substring(1) else "-$last"
-                    contentResult[lastIndex] = toggled
+                val toggled = if (last.startsWith("-")) {
+                    if (last.length > 1) last.substring(1) else last
+                } else {
+                    "-$last"
                 }
+                contentResult[lastIndex] = toggled
             }
         }
         isCalculated = false
@@ -79,12 +80,13 @@ class CalculatorViewModel(
                 val percentage = currentVal / 100
                 contentResult.clear()
                 contentResult.add(formatResult(percentage))
-                isCalculated = true
+                lastOperation = ""
+                lastNumber = ""
             }
             return
         }
 
-        val opIndex = contentResult.indexOfFirst { isPrimaryOperator(it) }
+        val opIndex = contentResult.indexOfLast { isPrimaryOperator(it) }
         
         if (opIndex > 0 && opIndex < contentResult.size - 1) {
             val num1 = parseNumber(contentResult.subList(0, opIndex))
@@ -131,8 +133,9 @@ class CalculatorViewModel(
         val last = contentResult.lastOrNull()
         when {
             last == null -> contentResult.add("-")
-            isPrimaryOperator(last) -> contentResult.add("-")
             last == "-" -> {}
+            last == "+" || last == "×" || last == "÷" || last == "%" || last == "+/-" -> contentResult.add("-")
+            isPrimaryOperator(last) -> contentResult.add("-")
             else -> contentResult.add("-")
         }
         isCalculated = false
@@ -145,6 +148,9 @@ class CalculatorViewModel(
             isCalculated = false
             return
         }
+
+        val hasComma = contentResult.any { it.contains(".") }
+        if (hasComma) return
 
         val lastIndex = contentResult.size - 1
         if (lastIndex >= 0) {
@@ -178,9 +184,10 @@ class CalculatorViewModel(
         val last = contentResult.getOrNull(lastIndex)
 
         when {
-            last == null || isOperator(last) -> contentResult.add(num)
+            last == null || (isOperator(last) && last != "-") -> contentResult.add(num)
+            last == "-" -> contentResult[lastIndex] = last + num
             last == "0" -> contentResult[lastIndex] = num
-            last.length >= 15 -> {}
+            last.length >= 15 || (last.contains(".") && last.length >= 17) -> {}
             else -> contentResult[lastIndex] = last + num
         }
     }
@@ -279,8 +286,17 @@ class CalculatorViewModel(
         else -> op
     }
 
+    private fun toOperatorSymbol(displaySymbol: String): String {
+        return when (displaySymbol) {
+            "×" -> "*"
+            "÷" -> "/"
+            else -> displaySymbol
+        }
+    }
+
     private fun performOperation(num1: Double, num2: Double, op: String): Double? {
-        return when (op) {
+        val symbol = toOperatorSymbol(op)
+        return when (symbol) {
             "+" -> model.add(num1, num2)
             "-" -> model.subtract(num1, num2)
             "*" -> model.multiply(num1, num2)

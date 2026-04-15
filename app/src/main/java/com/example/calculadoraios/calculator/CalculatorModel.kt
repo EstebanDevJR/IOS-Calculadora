@@ -14,8 +14,8 @@ class CalculatorModel {
         return num1 * num2
     }
 
-    fun divide(num1: Double, num2: Double): Double {
-        return if (num2 != 0.0) num1 / num2 else 0.0
+    fun divide(num1: Double, num2: Double): Double? {
+        return if (num2 != 0.0) num1 / num2 else null
     }
 
     fun percentage(num1: Double, num2: Double? = null): Double {
