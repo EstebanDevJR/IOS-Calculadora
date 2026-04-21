@@ -52,8 +52,6 @@ class CalculatorViewModel () : ViewModel() {
     private fun isErrorState(): Boolean =
         tokens.size == 1 && tokens.firstOrNull() == "Error"
 
-    // ================= EXPRESIÓN VISUAL =================
-
     private fun buildExpressionForDisplay(tokenList: List<String>): String {
         if (tokenList.isEmpty()) return ""
 
@@ -108,12 +106,10 @@ class CalculatorViewModel () : ViewModel() {
 
         if (tokens.isEmpty()) return
 
-        // eliminar operador final si existe
         if (isOperator(tokens.last())) {
             tokens.removeAt(tokens.lastIndex)
         }
         android.util.Log.d("CALC_TOKENS", "Tokens antes de evaluar: $tokens")
-        // guardar expresión
         savedExpression = tokens.joinToString(" ")
         val resultValue = model.evaluateExpression(tokens)
 
@@ -164,14 +160,12 @@ class CalculatorViewModel () : ViewModel() {
 
         when (valueButton) {
 
-            // ===== RESET =====
             "AC" -> {
                 tokens.clear()
                 isCalculated = false
                 savedExpression = ""
             }
 
-            // ===== SIGNO =====
             "+/-" -> {
                 if (tokens.isEmpty()) return
 
@@ -234,7 +228,6 @@ class CalculatorViewModel () : ViewModel() {
                 savedExpression = ""
             }
 
-            // num 0..9
             else -> {
 
                 if (isCalculated) {

@@ -60,10 +60,10 @@ fun CalculatorScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f) // 👈 CLAVE
+                .weight(1f)
                 .padding(horizontal = 18.dp, vertical = 4.dp),
             horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.Bottom // 👈 lo baja dentro de su espacio
+            verticalArrangement = Arrangement.Bottom
         ) {
             Text(
                 text = result,
@@ -76,8 +76,6 @@ fun CalculatorScreen(
             )
         }
 
-
-        // Usamos filas (Rows) dentro de una columna para organizar los botones
         val spacing = 12.dp
 
         Column(
@@ -85,7 +83,6 @@ fun CalculatorScreen(
             verticalArrangement = Arrangement.spacedBy(spacing),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // FILA 1: AC, +/-, %, /
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 CalculatorButton("AC", ButtonType.ACTION, viewModel)
                 CalculatorButton("+/-", ButtonType.ACTION, viewModel)
@@ -93,7 +90,6 @@ fun CalculatorScreen(
                 CalculatorButton("÷", ButtonType.OPERATOR, viewModel)
             }
 
-            // FILA 2: 7, 8, 9, X
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 CalculatorButton("7", ButtonType.NUMBER, viewModel)
                 CalculatorButton("8", ButtonType.NUMBER, viewModel)
@@ -101,7 +97,6 @@ fun CalculatorScreen(
                 CalculatorButton("×", ButtonType.OPERATOR, viewModel)
             }
 
-            // FILA 3: 4, 5, 6, -
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 CalculatorButton("4", ButtonType.NUMBER,viewModel)
                 CalculatorButton("5", ButtonType.NUMBER, viewModel)
@@ -109,7 +104,6 @@ fun CalculatorScreen(
                 CalculatorButton("-", ButtonType.OPERATOR,viewModel)
             }
 
-            // FILA 4: 1, 2, 3, +
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
                 CalculatorButton("1", ButtonType.NUMBER, viewModel)
                 CalculatorButton("2", ButtonType.NUMBER, viewModel)
@@ -117,9 +111,7 @@ fun CalculatorScreen(
                 CalculatorButton("+", ButtonType.OPERATOR, viewModel)
             }
 
-            // FILA 5: 0, decimal, =
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
-                // El botón "0" usa isWide = true
                 CalculatorButton("0", ButtonType.NUMBER, viewModel, isWide = true)
                 CalculatorButton(",", ButtonType.NUMBER,viewModel)
                 CalculatorButton("=", ButtonType.OPERATOR, viewModel)

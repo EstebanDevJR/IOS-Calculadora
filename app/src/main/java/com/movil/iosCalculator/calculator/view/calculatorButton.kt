@@ -22,8 +22,6 @@ fun CalculatorButton(
     viewModel: CalculatorViewModel,
     isWide: Boolean = false
 ) {
-
-    // El botón decide su color según el tipo
     val backgroundColor = when (type) {
         ButtonType.NUMBER -> Color(0xFF333333)
         ButtonType.OPERATOR -> Color(0xFFFF9500)
